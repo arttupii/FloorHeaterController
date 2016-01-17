@@ -124,7 +124,7 @@ void printParam(const int index, const __FlashStringHelper * name, const char* v
   Serial.print(name);
   Serial.print(": ");  
   Serial.print(value);
-  if(!last) Serial.printlnALL(",");
+  if(!last) Serial.println(",");
 }
 
 
@@ -215,19 +215,19 @@ void Controller::run(){
   if(millis() + adjustmentLoopTimeMs > adjustentTick) {
     adjustentTick = millis() + adjustmentLoopTimeMs;
 
-    if(measuredTemperatureInput<minTemperatureInput) {
+    if((minTemperatureInput>0) && (measuredTemperatureInput<minTemperatureInput)) {
       //Kasvata lämpötilaa. Sisääntuleva lämpötila on liian pieni. Lattia on liian kylmä
       pwmOut += pwmAdjustmentValueHeating;
     } 
-    else if(measuredTemperatureInput>maxTemperatureInput) {
+    else if((maxTemperatureInput>0) && (measuredTemperatureInput>maxTemperatureInput)) {
       //Pienennä lämpötilaa. Sisääntuleva lämpötila on liian suuri. Lattia on liian lämmin
       pwmOut -= pwmAdjustmentValueHeating;
     } 
-    else if(measuredTemperatureRoom<roomTemperature) {
+    else if((roomTemperature>0) && (measuredTemperatureRoom<roomTemperature)) {
       //Kasvata lämpötilaa. Huoneessa on liian kylmä.
       pwmOut += pwmAdjustmentValueRoom;
     } 
-    else if(measuredTemperatureRoom>roomTemperature) {
+    else if((roomTemperature>0) && (measuredTemperatureRoom>roomTemperature)) {
       //Piennnä lämpötilaa. Huoneessa on liian lämmintä.
       pwmOut -= pwmAdjustmentValueRoom;
     } 
@@ -235,8 +235,8 @@ void Controller::run(){
       //Sopivalämpötila saavutettu :) 
     }
 
-    if(pwmOut/10 > pwmMax) pwmOut = pwmMax*10;
-    if(pwmOut/10 < pwmMin) pwmOut = pwmMin*10;   
+    if(pwmOut/10 > pwmMax) pwmOut = ((int)pwmMax)*10;
+    if(pwmOut/10 < pwmMin) pwmOut = ((int)pwmMin)*10;   
   }
 }
 
